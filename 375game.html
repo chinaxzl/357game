@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .content {
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            background: red;
+            margin: 10px;
+        }
+
+        .btn-start,
+        .btn-init {
+            width: 80px;
+            height: 60px;
+            background: pink;
+            border: 0;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            font-size: 36px;
+        }
+
+        .name {
+            color: red;
+        }
+
+
+
+        .blue {
+            background-color: blue;
+        }
+
+        .green {
+            background-color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>
+        1.请选择一个或多个方框，点击开始按钮，选中方框会消失。<br>
+        2.默认开始为甲方
+        <span>当前玩家为：<span class="name">甲</span></span>
+    </h2>
+
+
+    <div class="game-container">
+        <div class="one"></div>
+        <div class="two"></div>
+        <div class="three"></div>
+    </div>
+
+
+    <div class="btn">
+        <div class="error"></div>
+        <button type="button" class="btn-start">开始</button>
+        <button type="button" class="btn-init">初始化</button>
+    </div>
+
+
+
+    <script>
+        (function () {
+
+
+            //初始化结构
+            function init() {
+                // 生成one结构
+                let spanone = `<span class="content" data-flag="one"></span>`;
+                for (let i = 0; i < 3; i++) {
+                    document.querySelector(".one").innerHTML += spanone
+                }
+                // 生成two结构
+                let spantwo = `<span class="content" data-flag="two"></span>`;
+                for (let i = 0; i < 5; i++) {
+                    document.querySelector(".two").innerHTML += spantwo
+                }
+                // 生成three结构
+                let spanthree = `<span class="content" data-flag="three"></span>`;
+                for (let i = 0; i < 7; i++) {
+                    document.querySelector(".three").innerHTML += spanthree
+                }
+
+
+
+                let spans = document.querySelectorAll(".content");
+                let record = ""; //记录上一次点击方框的data-flag的值
+                //给每个小方块绑定事件
+                for (let i = 0; i < spans.length; i++) {
+                    spans[i].addEventListener("mouseover", function (e) {
+                        this.className += " blue"
+                    })
+                    spans[i].addEventListener("mouseout", function (e) {
+                        this.classList.remove("blue")
+                    })
+
+                    spans[i].addEventListener("click", function (e) {
+                        // debugger
+                        //判断是否点击的是同一行
+                        let dataFlag = this.getAttribute("data-flag");
+                        if (!record) {
+                            record = dataFlag;
+                        }
+                        if (record !== dataFlag) {
+                            document.querySelector(".error").innerHTML = "请选择同一行";
+                        } else {
+                            document.querySelector(".error").innerHTML = "";
+                            //判断是否练习点击相同的方块
+                            if (this.className.indexOf("green") > -1) {
+                                this.classList.remove("green");
+                            } else {
+                                this.className += " green"
+                            }
+
+
+                        }
+                    })
+                }
+
+
+
+
+                let btnStart = document.querySelector(".btn-start");
+                let num = 1; //记录点击次数
+                let spanName = document.querySelector(".name")
+                btnStart.addEventListener("click", function (e) {
+                    record = "";
+                    console.log(document.querySelectorAll(".green").length < 1)
+                    if (document.querySelectorAll(".green").length < 1) {//判断是否选择了
+                        document.querySelector(".error").innerHTML = "请选择方框";
+                        return
+                    }
+
+                    let green = document.querySelectorAll(".green");
+                    for (let i = 0; i < green.length; i++) {//删除选中的方块
+                        green[i].remove();
+                    }
+
+                    console.log(record);
+                    num++;//判断玩家
+                    if (num % 2 === 0) {
+                        spanName.innerHTML = "乙";
+                    } else {
+                        spanName.innerHTML = "甲"
+                    }
+                    let spans = document.querySelectorAll(".content");
+                    if (spans.length === 1) {//当方块数为1的时候
+                        let name = spanName.innerHTML
+                        document.querySelector(".error").innerHTML = `${name}方输`
+                        btnStart.disabled = true;
+                        return
+                    } else if (spans.length === 0) {//当方块数为0的时候
+                        let name = spanName.innerHTML === "乙" ? "甲方输" : "乙方输";
+                        spanName.innerHTML = spanName.innerHTML === "甲" ? "乙" : "甲";
+                        document.querySelector(".error").innerHTML = name;
+                        btnStart.disabled = true;
+                        return
+                    }
+
+                })
+            }
+
+
+
+
+
+
+            init();
+
+            document.querySelector(".btn-init").addEventListener("click", function () { 初始化
+                document.querySelector(".error").innerHTML = "";
+                document.querySelector(".name").innerHTML = "甲";
+                document.querySelector(".btn-start").disabled = false;
+                let spans = document.querySelectorAll(".content");
+                for (var i = 0; i < spans.length; i++) {
+                    spans[i].remove();
+                }
+                init();
+
+            })
+
+
+
+
+
+
+        })()
+    </script>
+
+</body>
+
+</html>
